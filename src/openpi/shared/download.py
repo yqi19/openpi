@@ -88,6 +88,9 @@ def maybe_download(url: str, *, force_download: bool = False, **kwargs) -> pathl
             shutil.move(scratch_path, local_path)
             _ensure_permissions(local_path)
 
+        print("local_path is", local_path)
+        exit(0)
+
     except PermissionError as e:
         msg = (
             f"Local file permission error was encountered while downloading {url}. "

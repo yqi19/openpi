@@ -517,6 +517,18 @@ def train_loop(config: _config.TrainConfig):
                 break
 
             # The unified data loader returns (observation, actions) tuple
+
+            # # update the input tensor shape with channels
+            # # 修复：转换图像格式从 BHWC 到 BCHW
+            # def convert_image_format(x):
+            #     if isinstance(x, torch.Tensor) and x.dim() == 4 and x.shape[-1] in [1, 3, 4]:  # 假设最后一维是通道
+            #         print(f"\033[91mConverting image from {x.shape} to {x.permute(0, 3, 1, 2).shape}\033[0m")
+            #         return x.permute(0, 3, 1, 2)  # BHWC -> BCHW
+            #     return x
+
+            # # 应用转换
+            # observation = jax.tree.map(convert_image_format, observation)
+
             observation = jax.tree.map(lambda x: x.to(device), observation)  # noqa: PLW2901
             actions = actions.to(torch.float32)  # noqa: PLW2901
             actions = actions.to(device)  # noqa: PLW2901

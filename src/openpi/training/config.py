@@ -739,7 +739,8 @@ _CONFIGS = [
             base_config=DataConfig(prompt_from_task=True),
             extra_delta_transform=False,
         ),
-        batch_size=256,
+        # batch_size=256,
+        batch_size=128,
         lr_schedule=_optimizer.CosineDecaySchedule(
             warmup_steps=10_000,
             peak_lr=5e-5,
@@ -749,7 +750,8 @@ _CONFIGS = [
         optimizer=_optimizer.AdamW(clip_gradient_norm=1.0),
         ema_decay=0.999,
         weight_loader=weight_loaders.CheckpointWeightLoader("gs://openpi-assets/checkpoints/pi05_base/params"),
-        pytorch_weight_path="/path/to/your/pytorch_weight_path",
+        # pytorch_weight_path="/path/to/your/pytorch_weight_path",
+        pytorch_weight_path="./pytorch_checkpoint",
         num_train_steps=30_000,
     ),
     #
@@ -956,6 +958,29 @@ _CONFIGS = [
         exp_name="debug_pi05",
         wandb_enabled=False,
     ),
+    # openpi: training RLBench config
+    TrainConfig(
+       name="pi05_rlbench",
+       model=pi0_config.Pi0Config(pi05=True, action_horizon=10, discrete_state_input=False),
+       data=LeRobotLiberoDataConfig(
+           repo_id="/home/lijingyi/qiyu/manifold/train_rlbench_unzip_lerobot",
+           base_config=DataConfig(prompt_from_task=True),
+           extra_delta_transform=False,
+       ),
+       batch_size=256,
+       lr_schedule=_optimizer.CosineDecaySchedule(
+           warmup_steps=10_000,
+           peak_lr=5e-5,
+           decay_steps=1_000_000,
+           decay_lr=5e-5,
+       ),
+       optimizer=_optimizer.AdamW(clip_gradient_norm=1.0),
+       ema_decay=0.999,
+       weight_loader=weight_loaders.CheckpointWeightLoader("gs://openpi-assets/checkpoints/pi05_base/params"),
+       pytorch_weight_path="./pytorch_checkpoint",
+       num_train_steps=30_000,
+       save_interval=1000,
+   ),
     #
     # RoboArena configs.
     #
